@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">WeatherApp</string>
+    <string name="search_hint">Type city, state or zip</string>
+    <string name="location_header">Multiple locations found. Select the exact location</string>
+    <string name="no_matching_locations">No matching locations found. Please try again.</string>
+    <string name="location_rationale">This app uses the current location to show the weather forecast</string>
+    <string name="image_description">Weather condition</string>
+    <string name="max_temp_label">"Maximum temperature: "</string>
+    <string name="min_temp_label">"Minimum temperature: "</string>
+</resources>
