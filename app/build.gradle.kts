@@ -16,7 +16,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.aap.compose.weatherapp.HiltFriendlyTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -46,7 +46,7 @@ android {
     }
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/{AL2.0,LGPL2.1,LICENSE.md,LICENSE-notice.md}"
         }
     }
 }
@@ -61,6 +61,10 @@ dependencies {
     val interceptorVersion = "4.11.0"
     val mockkVersion = "1.13.5"
     val testCoroutinesVersion = "1.7.1"
+    val materialIconsVersion = "1.5.1"
+    val jetpackTestVersion = "1.5.1"
+    val navigationVersion = "2.7.3"
+    val hiltTestVersion = "2.44"
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
@@ -77,6 +81,7 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:$navVersion")
     implementation("androidx.hilt:hilt-navigation-compose:$hiltNavComposeVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$interceptorVersion")
+    implementation("androidx.compose.material:material-icons-extended:$materialIconsVersion")
 
     kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
 
@@ -88,9 +93,20 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:$jetpackTestVersion")
+    androidTestImplementation("androidx.navigation:navigation-testing:$navigationVersion")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:$hiltTestVersion")
+    androidTestImplementation ("io.mockk:mockk-android:$mockkVersion")
+
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:$hiltTestVersion")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:$jetpackTestVersion")
+    // Test rules and transitive dependencies:
+
+// Needed for createAndroidComposeRule, but not createComposeRule:
+
 }
 kapt {
     correctErrorTypes = true

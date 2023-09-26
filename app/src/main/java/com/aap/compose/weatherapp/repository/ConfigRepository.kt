@@ -6,7 +6,7 @@ interface ConfigRepository {
 }
 
 enum class Units(value: String) {
-    STANDARD("standar"),
+    STANDARD("standard"),
     METRIC("metric"),
     IMPERIAL("imperial"),
 }

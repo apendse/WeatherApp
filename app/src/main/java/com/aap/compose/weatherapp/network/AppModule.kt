@@ -2,6 +2,7 @@ package com.aap.compose.weatherapp.network
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.location.LocationManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,9 +21,15 @@ import javax.inject.Named
 const val SERVER_ADDRESS = "ServerAddress"
 const val API_KEY = "ApiKey"
 const val SHARED_PREF = "WeatherPref"
+
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Provides
+    fun provideLocationProvider(@ApplicationContext appContext: Context) =
+        appContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
 
     @Provides
     fun provideSharedPreference(@ApplicationContext appContext: Context): SharedPreferences {
@@ -43,15 +50,17 @@ object AppModule {
             .build()
 
     @Provides
-    fun provideRetrofit(okHttpClient: OkHttpClient, @Named(SERVER_ADDRESS) url: String): Retrofit = Retrofit.Builder()
-        .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl(url)
-        .client(okHttpClient)
-        .build()
+    fun provideRetrofit(okHttpClient: OkHttpClient, @Named(SERVER_ADDRESS) url: String): Retrofit =
+        Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(url)
+            .client(okHttpClient)
+            .build()
 
 
     @Provides
-    fun provideWeatherService(retrofit: Retrofit): WeatherService = retrofit.create(WeatherService::class.java)
+    fun provideWeatherService(retrofit: Retrofit): WeatherService =
+        retrofit.create(WeatherService::class.java)
 
     @Provides
     @Named(SERVER_ADDRESS)

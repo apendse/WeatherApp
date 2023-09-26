@@ -3,7 +3,6 @@ package com.aap.compose.weatherapp.repository
 import android.content.SharedPreferences
 import com.aap.compose.weatherapp.data.Coordinates
 import com.aap.compose.weatherapp.data.GeoLocationData
-import com.aap.compose.weatherapp.data.LocationParam
 import com.aap.compose.weatherapp.data.TemperatureData
 import com.aap.compose.weatherapp.data.WeatherData
 import com.aap.compose.weatherapp.network.WeatherService
@@ -11,11 +10,8 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
@@ -49,7 +45,7 @@ class WeatherRepositoryImplTest {
         every { sharedPreferences.edit() } returns editor
         every { editor.putFloat(any(), any())} returns editor
         every { editor.commit() } returns true
-        val location = LocationParam(0.0, 0.0)
+        val location = GeoLocationData("",0.0, 0.0, "", "")
         val actual = weatherRepositoryImpl.getWeatherForLocation(location).last()
 
         Assert.assertEquals(expected, actual)
@@ -66,7 +62,7 @@ class WeatherRepositoryImplTest {
         every { sharedPreferences.edit() } returns editor
         every { editor.putFloat(any(), any())} returns editor
         every { editor.commit() } returns true
-        val location = LocationParam(4.0, 5.0)
+        val location = GeoLocationData("Lodi", 4.0, 5.0, "USA", "CA")
         weatherRepositoryImpl.getWeatherForLocation(location).last()
 
         verify {editor.putFloat(LATITUDE_PREF, 4.0.toFloat())}

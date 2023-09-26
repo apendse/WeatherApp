@@ -7,4 +7,10 @@
     <string name="image_description">Weather condition</string>
     <string name="max_temp_label">"Maximum temperature: "</string>
     <string name="min_temp_label">"Minimum temperature: "</string>
+    <string name="last_lcoation_forecast">Previously searched location</string>
+    <string name="metric_temperature_suffix">\u00b0C</string>
+    <string name="imperial_temperature_suffix">\u00b0F</string>
+    <string name="humidity_template">Humidity %1$.2f %%</string>
+    <string name="search_icon_content_desc">Search icon</string>
+    <string name="search_close_icon_content_desc">Searchbar close button</string>
 </resources>

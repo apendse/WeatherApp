@@ -7,16 +7,20 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.aap.compose.weatherapp.data.LocationParam
+import com.aap.compose.weatherapp.data.GeoLocationData
 import com.aap.compose.weatherapp.screens.detail.WeatherDetailScreen
 import com.aap.compose.weatherapp.screens.home.HomeScreen
 
 @Composable
 fun NavigationGraph(modifier: Modifier, navController: NavHostController) {
-    NavHost(modifier = modifier, navController = navController, startDestination = NavDestinations.HOME) {
+    NavHost(
+        modifier = modifier,
+        navController = navController,
+        startDestination = NavDestinations.HOME
+    ) {
         composable(NavDestinations.HOME) {
-            HomeScreen({ latitude, longitude ->
-                navController.navigate("${NavDestinations.WEATHER_DETAILS}/${latitude}/${longitude}")
+            HomeScreen({ latitude, longitude, name, country, state ->
+                navController.navigate("${NavDestinations.WEATHER_DETAILS}/${latitude}/${longitude}/${name}/${country}/${state}")
             })
         }
 
@@ -25,22 +29,27 @@ fun NavigationGraph(modifier: Modifier, navController: NavHostController) {
             arguments = listOf(
                 navArgument(NavDestinations.LATITUDE_PARAM) { type = NavType.FloatType },
                 navArgument(NavDestinations.LONGITUDE_PARAM) { type = NavType.FloatType },
+                navArgument(NavDestinations.LOCATION_NAME_PARAM) { type = NavType.StringType },
+                navArgument(NavDestinations.LOCATION_COUNTRY_PARAM) { type = NavType.StringType },
+                navArgument(NavDestinations.LOCATION_STATE_PARAM) { type = NavType.StringType },
             )
         ) { backStackEntry ->
             WeatherDetailScreen(
                 modifier,
-                LocationParam(
+                GeoLocationData(
+                    backStackEntry.arguments?.getString(NavDestinations.LOCATION_NAME_PARAM, "")
+                        ?: "",
+
                     backStackEntry.arguments?.getFloat(NavDestinations.LATITUDE_PARAM)?.toDouble()
                         ?: 0.0,
                     backStackEntry.arguments?.getFloat(NavDestinations.LONGITUDE_PARAM)?.toDouble()
-                        ?: 0.0
+                        ?: 0.0,
+                    backStackEntry.arguments?.getString(NavDestinations.LOCATION_COUNTRY_PARAM, "")
+                        ?: "",
+                    backStackEntry.arguments?.getString(NavDestinations.LOCATION_COUNTRY_PARAM, "")
+                        ?: "",
                 ),
             )
         }
     }
-}
-
-private fun getTrimmedString(str: String?): String {
-    val str1 = str ?: return "0.0"
-    return str1.substring(1)
 }
