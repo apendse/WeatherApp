@@ -4,6 +4,9 @@ import com.aap.compose.weatherapp.data.GeoLocationData
 import com.aap.compose.weatherapp.data.WeatherData
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * The weather related API supported by the app.
+ */
 interface WeatherRepository {
     fun getWeatherForLocation(geoLocationData: GeoLocationData): Flow<WeatherData>
 

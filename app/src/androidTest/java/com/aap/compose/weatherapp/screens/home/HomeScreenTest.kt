@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.aap.compose.weatherapp.R
+import com.aap.compose.weatherapp.location.LocationProvider
 import com.aap.compose.weatherapp.repository.ConfigRepository
 import com.aap.compose.weatherapp.repository.WeatherRepository
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -31,6 +32,9 @@ class HomeScreenTest {
     @Inject
     lateinit var configRepository: ConfigRepository
 
+    @Inject
+    lateinit var locationProvider: LocationProvider
+
     @Before
     fun setup() {
         hiltRule.inject()
@@ -38,7 +42,7 @@ class HomeScreenTest {
 
     @Test
     fun homeScreen_no_previousLocation_searchViewIsVisible() {
-        val homeScreenViewModel = HomeScreenViewModel(weatherRepository, configRepository)
+        val homeScreenViewModel = HomeScreenViewModel(weatherRepository, configRepository, locationProvider)
         composeTestRule.setContent {
             HomeScreen(onLocationClicked = { _, _, _, _, _ -> }, Modifier, homeScreenViewModel)
         }

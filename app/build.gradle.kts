@@ -57,7 +57,7 @@ dependencies {
     val hiltVersion = "2.44"
     val navVersion = "2.7.3"
     val materialVersion = "1.1.2"
-    val hiltNavComposeVersion = "1.0.0"
+    val hiltNavComposeVersion = "1.1.0-alpha01"
     val interceptorVersion = "4.11.0"
     val mockkVersion = "1.13.5"
     val testCoroutinesVersion = "1.7.1"

@@ -90,7 +90,7 @@ private fun GeoLocationData.buildRowTitle(): String {
     if (state != null) {
         sb.append(", ").append(state)
     }
-    if (country.isNotEmpty()) {
+    if (country.isNotEmpty() && country != state) {
         sb.append(", ").append(country)
     }
     return sb.toString()
