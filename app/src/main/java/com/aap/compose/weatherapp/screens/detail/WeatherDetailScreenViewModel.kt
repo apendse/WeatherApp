@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.aap.compose.weatherapp.data.GeoLocationData
 import com.aap.compose.weatherapp.data.WeatherData
 import com.aap.compose.weatherapp.repository.ConfigRepository
-import com.aap.compose.weatherapp.repository.Units
 import com.aap.compose.weatherapp.repository.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -15,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -85,10 +84,13 @@ fun WeatherSearchBar(recentEntries: List<GeoLocationData>, onRecentSearchClick: 
 
 private fun GeoLocationData.buildRowTitle(): String {
     val sb = StringBuilder(name)
+    if (isCurrentLocation) {
+        return sb.toString()
+    }
     if (state != null) {
         sb.append(", ").append(state)
     }
-    if (country != null) {
+    if (country.isNotEmpty()) {
         sb.append(", ").append(country)
     }
     return sb.toString()

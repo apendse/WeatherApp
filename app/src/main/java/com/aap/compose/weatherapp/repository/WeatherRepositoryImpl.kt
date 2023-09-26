@@ -1,13 +1,11 @@
 package com.aap.compose.weatherapp.repository
 
 import android.content.SharedPreferences
-import android.util.Log
 import com.aap.compose.weatherapp.data.GeoLocationData
 import com.aap.compose.weatherapp.data.WeatherData
 import com.aap.compose.weatherapp.network.API_KEY
 import com.aap.compose.weatherapp.network.WeatherService
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 import org.jetbrains.annotations.VisibleForTesting
 import javax.inject.Inject
@@ -32,9 +30,6 @@ class WeatherRepositoryImpl @Inject constructor(
     @Named(API_KEY)
     var apiKey = ""
 
-    init {
-        Log.d("YYYY", "Weather repo created")
-    }
     val recents = mutableListOf<GeoLocationData>()
 
     override fun getWeatherForLocation(geoLocationData: GeoLocationData): Flow<WeatherData> {
@@ -48,22 +43,18 @@ class WeatherRepositoryImpl @Inject constructor(
             savePrefs(geoLocationData)
             updateRecent(geoLocationData)
             emit(weatherData)
-
         }
     }
 
     @VisibleForTesting
     fun updateRecent(geoLocationData: GeoLocationData) {
-        if (recents.contains(geoLocationData)) {
+        if (geoLocationData.isCurrentLocation || recents.contains(geoLocationData)) {
             return
         }
-        Log.d("YYYY", "Recents size1 ${recents.size}")
         recents.add(0, geoLocationData)
-        Log.d("YYYY", "Recents size2 ${recents.size}")
         while(recents.size > MAX_SIZE) {
             recents.removeLast()
         }
-        Log.d("YYYY", "Recents size3 ${recents.size}")
     }
 
     private fun savePrefs(locationParam: GeoLocationData) {

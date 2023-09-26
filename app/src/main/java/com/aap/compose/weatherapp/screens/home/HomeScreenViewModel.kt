@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aap.compose.weatherapp.data.GeoLocationData
 import com.aap.compose.weatherapp.data.WeatherData
+import com.aap.compose.weatherapp.location.LocationProvider
 import com.aap.compose.weatherapp.repository.ConfigRepository
 import com.aap.compose.weatherapp.repository.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,17 +16,32 @@ import javax.inject.Inject
 const val USA_COUNTRY_CODE = "us"
 
 @HiltViewModel
-class HomeScreenViewModel @Inject constructor(private val weatherRepository: WeatherRepository, private val configRepository: ConfigRepository) :
+class HomeScreenViewModel @Inject constructor(private val weatherRepository: WeatherRepository, private val configRepository: ConfigRepository, private val locationProvider: LocationProvider) :
     ViewModel() {
 
 
     private val _state = MutableStateFlow<HomeState>(HomeState.CheckIfPreviousLocationAvailable)
     val state: StateFlow<HomeState> = _state
 
-    private val _recentSearchLocationsState = MutableStateFlow(emptyList<GeoLocationData>())
     val recentSearches
         get() =
+            getRecentSearchesWithLocation()
+
+    private fun getRecentSearchesWithLocation(): List<GeoLocationData> {
+        return if (locationProvider.isLocationEnabled()) {
+            val currentLocation = locationProvider.getCurrentLocation()
+            if (currentLocation.isCurrentLocation) {
+                mutableListOf<GeoLocationData>().apply {
+                    add(currentLocation)
+                    addAll(weatherRepository.getRecentLocations())
+                }
+            } else {
+                weatherRepository.getRecentLocations()
+            }
+        } else {
             weatherRepository.getRecentLocations()
+        }
+    }
 
     fun getUnits() = configRepository.getUnits()
 

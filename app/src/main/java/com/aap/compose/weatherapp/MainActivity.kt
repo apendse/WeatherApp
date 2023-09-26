@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -22,33 +23,27 @@ import com.aap.compose.weatherapp.ui.theme.Green40
 import com.aap.compose.weatherapp.ui.theme.WeatherAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
-const val REQUEST_CODE = 1001
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    var locationPermissionGranted = false
-    val requestPermissionLauncher =
+    private var locationCallbackInvoked = false
+    private var locationPermissionGranted = false
+    private val requestPermissionLauncher =
         this.registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (isGranted) {
-
-            } else {
-
+            locationCallbackInvoked = true
+            locationPermissionGranted = isGranted
+            if (locationPermissionGranted) {
+                viewModel.handleLocationPermissionGranted()
             }
         }
+
+    val viewModel: MainActivityViewModel by viewModels()
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (ContextCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            locationPermissionGranted = true
-        } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.ACCESS_COARSE_LOCATION)) {
-            requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_COARSE_LOCATION)
-        } else {
-            requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+        if (!locationCallbackInvoked) {
+            checkLocationPermission()
         }
         setContent {
             val navController = rememberNavController()
@@ -68,5 +63,20 @@ class MainActivity : ComponentActivity() {
 
 
     }
-}
 
+    private fun checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            locationPermissionGranted = true
+            viewModel.handleLocationPermissionGranted()
+        } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+        } else {
+            requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+        }
+
+    }
+}
