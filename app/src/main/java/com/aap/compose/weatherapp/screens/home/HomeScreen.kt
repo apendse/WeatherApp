@@ -36,7 +36,7 @@ import com.aap.compose.weatherapp.screens.detail.WeatherScreen
 const val DUMMY_STATE = "dummyState"
 @Composable
 fun HomeScreen(
-    onLocationClicked: (latitude: Double, longitude: Double, name: String, country: String, state: String) -> Unit,
+    onLocationClicked: (latitude: Double, longitude: Double, name: String, country: String, state: String, isCurrentLocation: Boolean) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel = hiltViewModel()
 ) {
@@ -46,7 +46,7 @@ fun HomeScreen(
     ) {
         val context = LocalContext.current
         val uiState by viewModel.state.collectAsState()
-        WeatherSearchBar(viewModel.recentSearches, onRecentSearchClick = { location -> onLocationClicked(location.lat, location.lon, location.name, location.country, location.state ?: DUMMY_STATE)} ) { query -> viewModel.getGeoLocationFor(query) }
+        WeatherSearchBar(viewModel.recentSearches, onRecentSearchClick = { location -> onLocationClicked(location.lat, location.lon, location.name, location.country, location.state ?: DUMMY_STATE, location.isCurrentLocation)} ) { query -> viewModel.getGeoLocationFor(query) }
         when (uiState) {
             is HomeState.ErrorState -> {
                 val errorString = "Error ${(uiState as HomeState.ErrorState).throwable}"
@@ -118,10 +118,10 @@ private fun RenderWeatherForLastLocation(weatherData: WeatherData, units: Units)
 
 private fun navigateToLocationForecast(
     uiState: HomeState.SingleMatchingLocation,
-    onLocationClicked: (latitude: Double, longitude: Double, name: String, country: String, state: String) -> Unit
+    onLocationClicked: (latitude: Double, longitude: Double, name: String, country: String, state: String, isCurrentLocation: Boolean) -> Unit
 ) {
     with(uiState.geoLocationData) {
-        onLocationClicked(lat, lon, name, country, state ?: DUMMY_STATE)
+        onLocationClicked(lat, lon, name, country, state ?: DUMMY_STATE, isCurrentLocation)
     }
 }
 
@@ -133,7 +133,7 @@ private fun navigateToLocationForecast(
 @Composable
 fun ShowListOfLocations(
     list: List<GeoLocationData>,
-    onLocationSelected: (latitude: Double, longitude: Double, name: String, country: String, state: String) -> Unit
+    onLocationSelected: (latitude: Double, longitude: Double, name: String, country: String, state: String, isCurrentLocation: Boolean) -> Unit
 ) {
     val header = stringResource(id = R.string.location_header)
     LazyColumn() {
@@ -157,7 +157,8 @@ fun ShowListOfLocations(
                         element.lon,
                         element.name,
                         element.country,
-                        element.state ?: DUMMY_STATE
+                        element.state ?: DUMMY_STATE,
+                        element.isCurrentLocation
                     )
                 }, text = content
             )

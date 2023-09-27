@@ -50,14 +50,11 @@ class HomeScreenViewModel @Inject constructor(private val weatherRepository: Wea
     }
 
     fun loadWeatherForLastLocation() {
-        val locationParam = weatherRepository.getLastLocation()
-        if (locationParam == null) {
-            return
-        }
+        val locationParam = weatherRepository.getLastLocation() ?: return
         getWeatherForLocation(locationParam)
     }
 
-    fun getWeatherForLocation(locationData: GeoLocationData) {
+    private fun getWeatherForLocation(locationData: GeoLocationData) {
         _state.value = HomeState.FetchingDataState
         viewModelScope.launch {
             try {

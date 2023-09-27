@@ -8,7 +8,8 @@ object NavDestinations {
     const val LOCATION_COUNTRY_PARAM = "location_country"
     const val LOCATION_STATE_PARAM = "location_state"
     const val WEATHER_DETAILS = "weatherDetails"
+    const val IS_CURRENT_LOCATION = "isCurrentLocation"
 
     const val WEATHER_DETAIL_WITH_PARAM_PLACE_HOLDERS =
-        "${WEATHER_DETAILS}/{${LATITUDE_PARAM}}/{${LONGITUDE_PARAM}}/{${LOCATION_NAME_PARAM}}/{${LOCATION_COUNTRY_PARAM}}/{${LOCATION_STATE_PARAM}}"
+        "${WEATHER_DETAILS}/{${LATITUDE_PARAM}}/{${LONGITUDE_PARAM}}/{${LOCATION_NAME_PARAM}}/{${LOCATION_COUNTRY_PARAM}}/{${LOCATION_STATE_PARAM}}/{${IS_CURRENT_LOCATION}}"
 }

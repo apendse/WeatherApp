@@ -1,6 +1,7 @@
 package com.aap.compose.weatherapp.repository
 
 import android.content.SharedPreferences
+import android.util.Log
 import com.aap.compose.weatherapp.data.GeoLocationData
 import com.aap.compose.weatherapp.data.WeatherData
 import com.aap.compose.weatherapp.network.API_KEY
@@ -11,17 +12,17 @@ import org.jetbrains.annotations.VisibleForTesting
 import javax.inject.Inject
 import javax.inject.Named
 
-const val DEFAULT_LIMIT = 5
+const val MAXIMUM_MATCHING_NAMES_LIMIT = 2
 const val LATITUDE_PREF = "latitude"
 const val LONGITUDE_PREF = "longitude"
 const val NAME_PREF = "NamePref"
 const val COUNTRY_PREF = "Country"
 const val STATE_PREF = "StatePref"
-const val MAX_SIZE = 5
+const val MAX_NUM_RECENT_LOCATIONS = 5
 
 class WeatherRepositoryImpl @Inject constructor(
-    val weatherService: WeatherService, val configRepository: ConfigRepository,
-    val sharedPreferences: SharedPreferences
+    private val weatherService: WeatherService, val configRepository: ConfigRepository,
+    private val sharedPreferences: SharedPreferences
 ) :
     WeatherRepository {
 
@@ -30,7 +31,7 @@ class WeatherRepositoryImpl @Inject constructor(
     @Named(API_KEY)
     var apiKey = ""
 
-    val recents = mutableListOf<GeoLocationData>()
+    private val recentLocations = mutableListOf<GeoLocationData>()
 
     override fun getWeatherForLocation(geoLocationData: GeoLocationData): Flow<WeatherData> {
         return flow {
@@ -48,16 +49,22 @@ class WeatherRepositoryImpl @Inject constructor(
 
     @VisibleForTesting
     fun updateRecent(geoLocationData: GeoLocationData) {
-        if (geoLocationData.isCurrentLocation || recents.contains(geoLocationData)) {
+        if (geoLocationData.isCurrentLocation || recentLocations.contains(geoLocationData)) {
             return
         }
-        recents.add(0, geoLocationData)
-        while(recents.size > MAX_SIZE) {
-            recents.removeLast()
+        if (geoLocationData.name == "Current Location") {
+            Log.d("YYYY", "Here")
+        }
+        recentLocations.add(0, geoLocationData)
+        while(recentLocations.size > MAX_NUM_RECENT_LOCATIONS) {
+            recentLocations.removeLast()
         }
     }
 
     private fun savePrefs(locationParam: GeoLocationData) {
+        if (locationParam.isCurrentLocation) {
+            return
+        }
         val editor = sharedPreferences.edit()
         editor.putFloat(LATITUDE_PREF, locationParam.lat.toFloat())
         editor.putFloat(LONGITUDE_PREF, locationParam.lon.toFloat())
@@ -86,7 +93,7 @@ class WeatherRepositoryImpl @Inject constructor(
 
         return flow {
 
-            emit(weatherService.getLatLongForLocation(location, apiKey, DEFAULT_LIMIT))
+            emit(weatherService.getLatLongForLocation(location, apiKey, MAXIMUM_MATCHING_NAMES_LIMIT))
 
         }
     }
@@ -98,5 +105,5 @@ class WeatherRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getRecentLocations() = recents
+    override fun getRecentLocations() = recentLocations
 }

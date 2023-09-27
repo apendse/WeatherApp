@@ -19,8 +19,8 @@ fun NavigationGraph(modifier: Modifier, navController: NavHostController) {
         startDestination = NavDestinations.HOME
     ) {
         composable(NavDestinations.HOME) {
-            HomeScreen({ latitude, longitude, name, country, state ->
-                navController.navigate("${NavDestinations.WEATHER_DETAILS}/${latitude}/${longitude}/${name}/${country}/${state}")
+            HomeScreen({ latitude, longitude, name, country, state, isCurrentLocation ->
+                navController.navigate("${NavDestinations.WEATHER_DETAILS}/${latitude}/${longitude}/${name}/${country}/${state}/${isCurrentLocation}")
             })
         }
 
@@ -32,6 +32,7 @@ fun NavigationGraph(modifier: Modifier, navController: NavHostController) {
                 navArgument(NavDestinations.LOCATION_NAME_PARAM) { type = NavType.StringType },
                 navArgument(NavDestinations.LOCATION_COUNTRY_PARAM) { type = NavType.StringType },
                 navArgument(NavDestinations.LOCATION_STATE_PARAM) { type = NavType.StringType },
+                navArgument(NavDestinations.IS_CURRENT_LOCATION) { type = NavType.BoolType },
             )
         ) { backStackEntry ->
             WeatherDetailScreen(
@@ -48,8 +49,10 @@ fun NavigationGraph(modifier: Modifier, navController: NavHostController) {
                         ?: "",
                     backStackEntry.arguments?.getString(NavDestinations.LOCATION_COUNTRY_PARAM, "")
                         ?: "",
+                    backStackEntry.arguments?.getBoolean(NavDestinations.IS_CURRENT_LOCATION, false) ?: false
                 ),
             )
         }
     }
 }
+
